@@ -1,0 +1,80 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "everhour-jira-time",
+  "title": "Everhour Jira Time",
+  "description": "Log time to Jira tickets in Everhour.",
+  "icon": "icon.png",
+  "author": "elivz",
+  "categories": [
+    "Productivity"
+  ],
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "time",
+      "title": "Log Time",
+      "subtitle": "Everhour",
+      "description": "Search Jira tickets and log time to them in Everhour.",
+      "mode": "view"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "jiraSite",
+      "title": "Jira Site",
+      "description": "Your Jira Cloud hostname.",
+      "type": "textfield",
+      "required": true,
+      "default": "happycog.atlassian.net"
+    },
+    {
+      "name": "jiraEmail",
+      "title": "Jira Email",
+      "description": "The email address of your Atlassian account.",
+      "type": "textfield",
+      "required": true
+    },
+    {
+      "name": "jiraToken",
+      "title": "Jira API Token",
+      "description": "Create one at id.atlassian.com → Security → API tokens.",
+      "type": "password",
+      "required": true
+    },
+    {
+      "name": "everhourToken",
+      "title": "Everhour API Key",
+      "description": "Everhour → My Profile → Application Access.",
+      "type": "password",
+      "required": true
+    },
+    {
+      "name": "everhourJiraPrefix",
+      "title": "Everhour Jira Prefix",
+      "description": "Everhour task IDs are this prefix, a dash, and the numeric Jira issue ID.",
+      "type": "textfield",
+      "required": false,
+      "default": "jr:8558"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^2.5.1",
+    "@raycast/utils": "^2.3.1"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^2.2.0",
+    "@types/node": "^22.19.0",
+    "@types/react": "^19.2.7",
+    "eslint": "^9.39.1",
+    "prettier": "^3.7.3",
+    "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint",
+    "test": "node --test \"test/*.test.ts\"",
+    "check": "tsc --noEmit && ray lint && npm test"
+  }
+}
