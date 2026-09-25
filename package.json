@@ -4,7 +4,7 @@
   "title": "Jira + Everhour",
   "description": "Search Jira tickets and log time to them in Everhour.",
   "icon": "icon.png",
-  "author": "elivz",
+  "author": "EliVZ",
   "categories": [
     "Productivity"
   ],
@@ -12,9 +12,8 @@
   "commands": [
     {
       "name": "time",
-      "title": "Log Time",
-      "subtitle": "Everhour",
-      "description": "Search Jira tickets and log time to them in Everhour.",
+      "title": "Find Jira Ticket",
+      "description": "Search Jira tickets to open, copy, or log time to in Everhour.",
       "mode": "view"
     }
   ],
@@ -22,10 +21,18 @@
     {
       "name": "jiraSite",
       "title": "Jira Site",
-      "description": "Your Jira Cloud hostname.",
+      "description": "Your Jira Cloud hostname, e.g. your-company.atlassian.net.",
       "type": "textfield",
       "required": true,
-      "default": "happycog.atlassian.net"
+      "placeholder": "your-company.atlassian.net"
+    },
+    {
+      "name": "jiraLinkUrl",
+      "title": "Jira Link URL",
+      "description": "Optional. The base URL for ticket links, if your Jira uses a custom domain. Links are this URL + /browse/ABC-123. Defaults to https://<Jira Site>.",
+      "type": "textfield",
+      "required": false,
+      "placeholder": "https://jira.example.com/jira"
     },
     {
       "name": "jiraEmail",

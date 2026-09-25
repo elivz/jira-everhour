@@ -1,4 +1,15 @@
-import { Action, ActionPanel, Form, Icon, List, PopToRootType, showHUD, showToast, Toast } from "@raycast/api";
+import {
+  Action,
+  ActionPanel,
+  Form,
+  Icon,
+  Keyboard,
+  List,
+  PopToRootType,
+  showHUD,
+  showToast,
+  Toast,
+} from "@raycast/api";
 import { showFailureToast, useCachedPromise, useForm } from "@raycast/utils";
 import { useState } from "react";
 import { currentTimer, jiraUrl, localDate, logTime, recentTickets, searchJira, Ticket, trackedSeconds } from "./api";
@@ -54,7 +65,20 @@ function TicketItem({ ticket }: { ticket: Ticket }) {
             shortcut={{ modifiers: ["cmd"], key: "t" }}
             target={<LogTimeForm ticket={ticket} />}
           />
-          {ticket.key && <Action.CopyToClipboard title="Copy Key" content={ticket.key} />}
+          {ticket.key && (
+            <>
+              <Action.CopyToClipboard
+                title="Copy Ticket Number"
+                content={ticket.key}
+                shortcut={{ modifiers: ["cmd"], key: "c" }}
+              />
+              <Action.CopyToClipboard
+                title="Copy Link"
+                content={jiraUrl(ticket.key)}
+                shortcut={Keyboard.Shortcut.Common.Copy}
+              />
+            </>
+          )}
         </ActionPanel>
       }
     />

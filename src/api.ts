@@ -12,11 +12,20 @@ export type Ticket = {
 
 const prefs = getPreferenceValues<Preferences>();
 const cache = new Cache();
+// Accept a pasted URL ("https://x.atlassian.net/") as well as a bare hostname.
+const jiraSite = prefs.jiraSite.replace(/^https?:\/\//, "").replace(/\/+$/, "");
+// Custom domains serve the web UI under a different base (e.g. https://jira.example.com/jira) but not the token API.
+const jiraLinkBase = prefs.jiraLinkUrl?.replace(/\/+$/, "") || `https://${jiraSite}`;
 const ISSUE_KEY = /^[a-z][a-z0-9]*-\d+$/i;
 
-export const jiraUrl = (key: string) => `https://${prefs.jiraSite}/browse/${key}`;
+export const jiraUrl = (key: string) => `${jiraLinkBase}/browse/${key}`;
 
-async function request<T>(url: string, init: RequestInit): Promise<T> {
+const AUTH_HINTS = {
+  Jira: "Check Jira Site (your *.atlassian.net host, not a custom domain), Jira Email, and Jira API Token.",
+  Everhour: "Check Everhour API Key.",
+};
+
+async function request<T>(service: keyof typeof AUTH_HINTS, url: string, init: RequestInit): Promise<T> {
   const res = await fetch(url, init);
   if (!res.ok) {
     const body = await res.text();
@@ -27,7 +36,8 @@ async function request<T>(url: string, init: RequestInit): Promise<T> {
     } catch {
       // Not JSON; use the raw body.
     }
-    throw new Error(`${res.status} ${message}`.trim());
+    const hint = res.status === 401 || res.status === 403 ? ` ${AUTH_HINTS[service]}` : "";
+    throw new Error(`${service}: ${res.status} ${message}`.trim() + hint);
   }
   return res.json() as Promise<T>;
 }
@@ -45,7 +55,7 @@ type JiraIssue = {
 };
 
 const jira = <T>(path: string) =>
-  request<T>(`https://${prefs.jiraSite}${path}`, {
+  request<T>("Jira", `https://${jiraSite}${path}`, {
     headers: {
       Authorization: `Basic ${Buffer.from(`${prefs.jiraEmail}:${prefs.jiraToken}`).toString("base64")}`,
       Accept: "application/json",
@@ -102,7 +112,7 @@ type TimeRecord = {
 };
 
 const everhour = <T>(path: string, init: RequestInit = {}) =>
-  request<T>(`https://api.everhour.com${path}`, {
+  request<T>("Everhour", `https://api.everhour.com${path}`, {
     ...init,
     headers: { "X-Api-Key": prefs.everhourToken, "Content-Type": "application/json" },
   });
