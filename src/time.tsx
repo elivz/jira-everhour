@@ -1,7 +1,7 @@
 import { Action, ActionPanel, Form, Icon, List, PopToRootType, showHUD, showToast, Toast } from "@raycast/api";
 import { showFailureToast, useCachedPromise, useForm } from "@raycast/utils";
 import { useState } from "react";
-import { jiraUrl, localDate, logTime, recentTickets, searchJira, Ticket, trackedSeconds } from "./api";
+import { currentTimer, jiraUrl, localDate, logTime, recentTickets, searchJira, Ticket, trackedSeconds } from "./api";
 import { formatDuration, parseDuration } from "./duration";
 
 export default function Command() {
@@ -92,9 +92,16 @@ function LogTimeForm({ ticket }: { ticket: Ticket }) {
         ? `You haven't tracked any time ${when}.`
         : `You have tracked ${formatDuration(tracked.data)} ${when === "today" ? "already today" : when}.`;
 
+  const timer = useCachedPromise(currentTimer);
+  const timerText = !timer.data
+    ? "Loading…"
+    : timer.data.status === "active"
+      ? `${formatDuration(timer.data.duration)} on ${[timer.data.task.number, timer.data.task.name].filter(Boolean).join(" ")}`
+      : "No timer running.";
+
   return (
     <Form
-      isLoading={tracked.isLoading}
+      isLoading={tracked.isLoading || timer.isLoading}
       navigationTitle={`Log Time: ${ticket.key}`}
       actions={
         <ActionPanel>
@@ -107,6 +114,7 @@ function LogTimeForm({ ticket }: { ticket: Ticket }) {
       <Form.TextField title="Description" placeholder="What did you work on?" {...itemProps.comment} />
       <Form.DatePicker title="Date" type={Form.DatePicker.Type.Date} {...itemProps.date} />
       <Form.Description title="Tracked" text={trackedText} />
+      <Form.Description title="Timer" text={timerText} />
     </Form>
   );
 }

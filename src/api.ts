@@ -139,6 +139,12 @@ export async function trackedSeconds(date: string): Promise<number> {
   return records.reduce((sum, record) => sum + record.time, 0);
 }
 
+export type Timer =
+  | { status: "stopped" }
+  | { status: "active"; duration: number; comment?: string; task: { number?: string; name: string } };
+
+export const currentTimer = () => everhour<Timer>("/timers/current");
+
 /** Adds time. Everhour merges this into an existing entry for the same task and date, joining comments. */
 export function logTime(taskId: string, seconds: number, date: Date, comment: string) {
   return everhour("/time", {
