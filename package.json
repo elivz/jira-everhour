@@ -1,8 +1,8 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "everhour-jira-time",
-  "title": "Everhour Jira Time",
-  "description": "Log time to Jira tickets in Everhour.",
+  "title": "Jira + Everhour",
+  "description": "Search Jira tickets and log time to them in Everhour.",
   "icon": "icon.png",
   "author": "elivz",
   "categories": [
@@ -47,14 +47,6 @@
       "description": "Everhour → My Profile → Application Access.",
       "type": "password",
       "required": true
-    },
-    {
-      "name": "everhourJiraPrefix",
-      "title": "Everhour Jira Prefix",
-      "description": "Everhour task IDs are this prefix, a dash, and the numeric Jira issue ID.",
-      "type": "textfield",
-      "required": false,
-      "default": "jr:8558"
     }
   ],
   "dependencies": {

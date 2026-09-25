@@ -1,8 +1,8 @@
-# Everhour Jira Time
+# Jira + Everhour
 
 A Raycast command for logging time to Jira tickets in Everhour.
 
-`⌘Space` → `Log Time` → search or pick a ticket → `↵` → enter time and description → `⌘↵`.
+`⌘Space` → `Log Time` → search or pick a ticket → `⌘T` (or `⌘↵`) → enter time and description → `⌘↵`. Press `↵` on a ticket to open it in Jira instead.
 
 - With an empty search: tickets you've logged time to in the last 14 days (from Everhour), then your open assigned tickets (from Jira).
 - Type a key (`HAM-2180`) to jump to that ticket, or words to search ticket summaries.
@@ -24,9 +24,8 @@ Raycast asks for these settings on first run:
 | Jira Email | Your Atlassian login email |
 | Jira API Token | id.atlassian.com → Security → API tokens |
 | Everhour API Key | Everhour → My Profile → Application Access |
-| Everhour Jira Prefix | `jr:8558` (default) |
 
-Everhour task IDs for Jira tickets are `<prefix>-<numeric Jira issue id>`, e.g. HAM-2212 is `jr:8558-169381`.
+Everhour task IDs for Jira tickets are `jr:<connection id>-<numeric Jira issue id>`, e.g. HAM-2212 is `jr:8558-169381`. The extension reads the connection ID off your Jira-linked Everhour projects on first run and caches it.
 
 ## Checks
 

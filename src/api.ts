@@ -1,4 +1,5 @@
-import { getPreferenceValues } from "@raycast/api";
+import { Cache, getPreferenceValues } from "@raycast/api";
+import { jiraPrefixFrom } from "./jira-prefix";
 
 export type Ticket = {
   taskId: string; // Everhour task ID, e.g. jr:8558-169381
@@ -10,7 +11,7 @@ export type Ticket = {
 };
 
 const prefs = getPreferenceValues<Preferences>();
-const jiraPrefix = prefs.everhourJiraPrefix || "jr:8558";
+const cache = new Cache();
 const ISSUE_KEY = /^[a-z][a-z0-9]*-\d+$/i;
 
 export const jiraUrl = (key: string) => `https://${prefs.jiraSite}/browse/${key}`;
@@ -68,9 +69,10 @@ export async function searchJira(query: string): Promise<Ticket[]> {
       : `summary ~ "${q.replace(/["\\]/g, "\\$&")}*" ORDER BY updated DESC`;
   const params = new URLSearchParams({ jql, fields: "summary,status,assignee", maxResults: "50" });
 
-  const [{ issues }, me] = await Promise.all([
+  const [{ issues }, me, jiraPrefix] = await Promise.all([
     jira<{ issues: JiraIssue[] }>(`/rest/api/3/search/jql?${params}`),
     getMyAccountId(),
+    getJiraPrefix(),
   ]);
   return issues.map((issue) => ({
     taskId: `${jiraPrefix}-${issue.id}`,
@@ -104,6 +106,16 @@ const everhour = <T>(path: string, init: RequestInit = {}) =>
     ...init,
     headers: { "X-Api-Key": prefs.everhourToken, "Content-Type": "application/json" },
   });
+
+/** The `jr:<connection id>` prefix of this workspace's Everhour task IDs, detected once and cached. */
+async function getJiraPrefix(): Promise<string> {
+  const cached = cache.get("jiraPrefix");
+  if (cached) return cached;
+  const projects = await everhour<{ id: string }[]>("/projects?platform=jr&limit=100");
+  const prefix = jiraPrefixFrom(projects.map((project) => project.id));
+  cache.set("jiraPrefix", prefix);
+  return prefix;
+}
 
 /** Local-time YYYY-MM-DD; toISOString() would give tomorrow's date on a late evening. */
 export function localDate(d: Date): string {
