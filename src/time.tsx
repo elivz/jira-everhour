@@ -1,7 +1,7 @@
 import { Action, ActionPanel, Form, Icon, List, PopToRootType, showHUD, showToast, Toast } from "@raycast/api";
 import { showFailureToast, useCachedPromise, useForm } from "@raycast/utils";
 import { useState } from "react";
-import { jiraUrl, logTime, recentTickets, searchJira, Ticket } from "./api";
+import { jiraUrl, localDate, logTime, recentTickets, searchJira, Ticket, trackedSeconds } from "./api";
 import { formatDuration, parseDuration } from "./duration";
 
 export default function Command() {
@@ -59,7 +59,7 @@ function TicketItem({ ticket }: { ticket: Ticket }) {
 type FormValues = { duration: string; comment: string; date: Date | null };
 
 function LogTimeForm({ ticket }: { ticket: Ticket }) {
-  const { handleSubmit, itemProps } = useForm<FormValues>({
+  const { handleSubmit, itemProps, values } = useForm<FormValues>({
     initialValues: { date: new Date() },
     validation: {
       duration: (value) => (parseDuration(value ?? "") ? undefined : "Try 15m, 1.5h, 1h 20m, 1:20, or minutes"),
@@ -79,8 +79,22 @@ function LogTimeForm({ ticket }: { ticket: Ticket }) {
     },
   });
 
+  const day = values.date ?? new Date();
+  const tracked = useCachedPromise(trackedSeconds, [localDate(day)]);
+  const when =
+    localDate(day) === localDate(new Date())
+      ? "today"
+      : `on ${day.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}`;
+  const trackedText =
+    tracked.data === undefined
+      ? "Loading…"
+      : tracked.data === 0
+        ? `You haven't tracked any time ${when}.`
+        : `You have tracked ${formatDuration(tracked.data)} ${when === "today" ? "already today" : when}.`;
+
   return (
     <Form
+      isLoading={tracked.isLoading}
       navigationTitle={`Log Time: ${ticket.key}`}
       actions={
         <ActionPanel>
@@ -92,6 +106,7 @@ function LogTimeForm({ ticket }: { ticket: Ticket }) {
       <Form.TextField title="Time" placeholder="1h 20m" autoFocus {...itemProps.duration} />
       <Form.TextField title="Description" placeholder="What did you work on?" {...itemProps.comment} />
       <Form.DatePicker title="Date" type={Form.DatePicker.Type.Date} {...itemProps.date} />
+      <Form.Description title="Tracked" text={trackedText} />
     </Form>
   );
 }

@@ -86,6 +86,7 @@ export async function searchJira(query: string): Promise<Ticket[]> {
 
 type TimeRecord = {
   user: number;
+  time: number;
   date: string;
   createdAt: string;
   task?: {
@@ -130,6 +131,12 @@ export async function recentTickets(): Promise<Ticket[]> {
     });
   }
   return [...seen.values()].slice(0, 15);
+}
+
+/** Total seconds I've tracked on a YYYY-MM-DD date. */
+export async function trackedSeconds(date: string): Promise<number> {
+  const records = await everhour<TimeRecord[]>(`/users/me/time?from=${date}&to=${date}`);
+  return records.reduce((sum, record) => sum + record.time, 0);
 }
 
 /** Adds time. Everhour merges this into an existing entry for the same task and date, joining comments. */

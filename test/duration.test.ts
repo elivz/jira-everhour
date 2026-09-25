@@ -32,4 +32,5 @@ test("formats seconds", () => {
   assert.equal(formatDuration(4800), "1h 20m");
   assert.equal(formatDuration(7200), "2h");
   assert.equal(formatDuration(900), "15m");
+  assert.equal(formatDuration(25800), "7h 10m");
 });
