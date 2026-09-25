@@ -47,8 +47,13 @@ function TicketItem({ ticket }: { ticket: Ticket }) {
       accessories={[{ tag: ticket.status }]}
       actions={
         <ActionPanel>
-          <Action.Push title="Log Time" icon={Icon.Clock} target={<LogTimeForm ticket={ticket} />} />
           {ticket.key && <Action.OpenInBrowser title="Open in Jira" url={jiraUrl(ticket.key)} />}
+          <Action.Push
+            title="Log Time"
+            icon={Icon.Clock}
+            shortcut={{ modifiers: ["cmd"], key: "t" }}
+            target={<LogTimeForm ticket={ticket} />}
+          />
           {ticket.key && <Action.CopyToClipboard title="Copy Key" content={ticket.key} />}
         </ActionPanel>
       }
