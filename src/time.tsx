@@ -139,8 +139,8 @@ function LogTimeForm({ ticket }: { ticket: Ticket }) {
       }
     >
       <Form.Description title={ticket.key} text={ticket.summary} />
-      <Form.TextField title="Time" placeholder="1h 20m" autoFocus {...itemProps.duration} />
-      <Form.TextField title="Description" placeholder="What did you work on?" {...itemProps.comment} />
+      <Form.TextField title="Description" placeholder="What did you work on?" autoFocus {...itemProps.comment} />
+      <Form.TextField title="Time" placeholder="1h 20m" {...itemProps.duration} />
       <Form.DatePicker title="Date" type={Form.DatePicker.Type.Date} {...itemProps.date} />
       <Form.Description title="Tracked" text={trackedText} />
       <Form.Description title="Timer" text={timerText} />

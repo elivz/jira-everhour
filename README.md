@@ -7,7 +7,7 @@ A Raycast command for finding Jira tickets and logging time to them in Everhour.
 | Key | Action |
 |---|---|
 | `↵` | Open the ticket in Jira |
-| `⌘T` or `⌘↵` | Log time: enter time and description, then `⌘↵` |
+| `⌘T` or `⌘↵` | Log time: enter description and time, then `⌘↵` |
 | `⌘C` | Copy the ticket number |
 | `⌘⇧C` | Copy a link to the ticket |
 
